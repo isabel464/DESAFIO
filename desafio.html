@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Buscar Usuário por ID</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f5e1ef;
+    }
+
+    .container {
+      background-color: white;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0 15px 0;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      background-color:#fdc3fd;
+      color: rgb(99, 73, 90);
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background-color: #e2b1d8;
+    }
+
+    #resultado {
+      margin-top: 20px;
+      background-color: #eeadda;
+      padding: 15px;
+      border-radius: 5px;
+      border: 1px solid #f38ecc;
+      text-align: left;
+      font-size: 14px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .item {
+      margin-bottom: 8px;
+    }
+
+    .item strong {
+      color: #6b245c;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Buscar Informações do Usuário</h2>
+    <label for="userId">Digite o ID do usuário:</label><br>
+    <input type="number" id="userId" placeholder="Ex: 1">
+    <button onclick="buscarUsuario()">Buscar</button>
+
+    <div id="resultado"></div>
+  </div>
+
+  <script>
+    function buscarUsuario() {
+      const userId = document.getElementById('userId').value.trim();
+      const resultadoDiv = document.getElementById('resultado');
+
+      if (!userId || userId <= 0) {
+        resultadoDiv.textContent = 'Por favor, insira um ID válido.';
+        return;
+      }
+
+      resultadoDiv.textContent = 'Carregando...';
+
+      fetch(`https://jsonplaceholder.typicode.com/users/${userId}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Usuário não encontrado.');
+          }
+          return response.json();
+        })
+        .then(data => {
+          resultadoDiv.innerHTML = `
+            <div class="item"><strong>Nome:</strong> ${data.name}</div>
+            <div class="item"><strong>Usuário:</strong> ${data.username}</div>
+            <div class="item"><strong>Email:</strong> ${data.email}</div>
+            <div class="item"><strong>Telefone:</strong> ${data.phone}</div>
+            <div class="item"><strong>Website:</strong> ${data.website}</div>
+            <div class="item"><strong>Empresa:</strong> ${data.company.name}</div>
+            <div class="item"><strong>Endereço:</strong> ${data.address.street}, ${data.address.suite}, ${data.address.city} - CEP: ${data.address.zipcode}</div>
+          `;
+        })
+        .catch(error => {
+          resultadoDiv.textContent = `Erro: ${error.message}`;
+        });
+    }
+  </script>
+
+</body>
+</html>
